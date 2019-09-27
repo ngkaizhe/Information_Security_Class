@@ -1,0 +1,21 @@
+Encrypt.py caesar 3 meetmeafterthetogaparty
+#output = PHHWPHDIWHUWKHWRJDSDUWB
+Encrypt.py caesar 7 keepgoingnevergiveup
+#output = RLLWNVPUNULCLYNPCLBW
+
+Encrypt.py playfair PLAYFAIREXAMPLE hidethegoldinthetrexestump
+#output = BMODZBXDNABEKUDMUIXMMOUVIF
+
+Encrypt.py vernam XMCL helo
+#output = QIJF
+
+Encrypt.py row 4312567 attackpostponeduntiltwoamxyz
+#output = TTNAAPTMTSUOAODWCOIXKNLYPETZ
+
+
+Encrypt.py rail_fence 2 MEETMEAFTERTHETOGAPARTY
+#output = MEMATRHTGPRYETEFETEOAAT
+Encrypt.py rail_fence 3 WEAREDISCOVEREDFLEEATONCE
+#output = WECRLTEERDSOEEFEAOCAIVDEN
+Encrypt.py rail_fence 4 WEAREDISCOVEREDFLEEATONCE
+#output = WIREEEDSEEEACAECVDLTNROFO
