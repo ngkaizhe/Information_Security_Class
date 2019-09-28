@@ -11,6 +11,8 @@ Encrypt.py vernam XMCL helo
 
 Encrypt.py row 4312567 attackpostponeduntiltwoamxyz
 #output = TTNAAPTMTSUOAODWCOIXKNLYPETZ
+Encrypt.py row 4312567 attackpostponeduntiltw
+#output = TTNAPTTSUAODWCOIKNLPET
 
 
 Encrypt.py rail_fence 2 MEETMEAFTERTHETOGAPARTY

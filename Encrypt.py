@@ -1,5 +1,5 @@
 import sys
-import re
+import math
 
 debug_mode = False
 
@@ -100,13 +100,15 @@ def row(key: int, plaintext: str):
 
 	plaintext = plaintext.upper()
 	len_key = len(key)
-	total_row = int(len(plaintext) / len_key)
+	total_row = math.ceil(len(plaintext) / len_key)
 
 	Ciphertext = ''
 
 	for n in range(1, len_key + 1):
 		col = key.index(str(n))
-		Ciphertext += ''.join([plaintext[r * len_key + col] for r in range(total_row)])
+		
+		Ciphertext += ''.join([plaintext[r * len_key + col] for r in range(total_row) if r * len_key + col < len(plaintext)])
+
 
 	return Ciphertext
 
