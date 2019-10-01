@@ -130,7 +130,7 @@ def RAILFENCE_DEC(key, cipher):
     ciphLen = len(cipher)
     strDe = list([' ' for i in range(ciphLen)])
     rowNum = int(key)
-    CalcGap = lambda(x): x * 2 - 3
+    CalcGap = lambda x: x * 2 - 3
     
     ciphIdx = 0
     #Build Decrypted Message
