@@ -2,70 +2,52 @@ import sys
 import math
 
 def CAESAR_DEC(key,cipher):
-    #print('CAESAR DECRYPTION')
     strDe = ""
     for char in cipher:
         charDe = ord(char) - ord('a')
-        #print("Before: ",char,charDe)
         charDe = ( charDe - key ) % 26
-        #print("After: ",charDe)
         strDe += chr(charDe + ord('a'))
     return strDe.lower()
 
 def PLAYFAIR_DEC(key,cipher):
-    print('PLAYFAIR DECRYPTION')
     #the Decrypted message
     strDe = ""
     #the Decryption Table
     tableDe = [ [-1 for i in range(5)] for i in range(5)]
-    #record what alphabet has been filled 
+    #array recording which alphabet has been filled 
     alphRecord = [False for i in range(26)]
-    #index of next available alphabet in key to fill in to Decryption Table
-    keyIdx = 0
+    #modify the key to ensure all alphabets are included
+    key += "abcdefghiklmnopqrstuvwxyz"
     keyLen = len(key)
-    #index of alphabet record indicating before which index has truley been filled. 
-    alphRecIdx = 0
+    #index of next available alphabet in key to fill in to Decryption Table
+    #initial value: 0
+    keyIdx = 0
    
-    #replace alphabet j into i in the key
-    for char,step in enumerate(key):
+    #replace alphabet j to i in the key
+    for step,char in enumerate(key):
         if(char == 'j'):
             key[step] = 'i'
    
     #fill up the Decryption Table
     for row in range(5):
         for col in range(5):
-            #if we haven't fill all the alphabets in the key to the Decryption Table, do it first.
-            if (keyIdx != keyLen) :
-                alphInt = ord(key[keyIdx]) - ord('a')
-                alphRecord[alphInt] = True
-                tableDe[row][col] = alphInt
-        
-                #find the next available alphabet in the key
-                #as for filling the Decryption Table
+            alphInt = ord(key[keyIdx]) - ord('a')
+            alphRecord[alphInt] = True
+            tableDe[row][col] = alphInt
+            #find the next available alphabet in the key
+            #as for filling the Decryption Table
+            while keyIdx < keyLen :
+                nextAlphInt = ord(key[keyIdx]) - ord('a')
+                if(alphRecord[nextAlphInt] == False):
+                    #if the next alphabet in key was not in the Decrpytion Table break.
+                    break
                 keyIdx += 1
-                while keyIdx < keyLen :
-                    nextAlphInt = ord(key[keyIdx]) - ord('a')
-                    if(alphRecord[nextAlphInt] == False):
-                        #if the next alphabet in key was not in the Decrpytion Table break.
-                        break
-                    keyIdx += 1
 
-            else:
-                #iterate to find the next available alphabet to fill the  Decryption Table from a to z
-                for itIdx in range(alphRecIdx,len(alphRecord)):
-                    #if alphabet is not 'j' ('a' is 0)
-                    if(itIdx != 9 and alphRecord[itIdx]==False):
-                        alphRecord[itIdx] =True
-                        tableDe[row][col] = itIdx
-                        alphRecIdx = itIdx
-                        break
     #transform tableDe from character index to char
     for row in range(5):
         for col in range(5):
             tableDe[row][col] = chr(ord('a')+tableDe[row][col])
             
-    #print('tableDe: ',tableDe)
-
     #process the cipher,iterating with step 2
     for cipherIdx in range(0,len(cipher),2):
         r1 = -1
@@ -78,14 +60,9 @@ def PLAYFAIR_DEC(key,cipher):
                 if(tableDe[r][c] == cipher[cipherIdx]):
                     r1 = r
                     c1 = c
-                elif(tableDe[r][c] == cipher[cipherIdx +1 ]):
+                elif(tableDe[r][c] == cipher[cipherIdx + 1]):
                     r2 = r
                     c2 = c
-        
-        #Debugging
-        if(r1 < 0 or r2 < 0 or c1 < 0 or c2 < 0):
-            print("Decipher Error")
-        
         #if same row shift left
         if(r1 == r2):
             c1 -= 1 if c1 > 0 else -4
@@ -99,12 +76,9 @@ def PLAYFAIR_DEC(key,cipher):
             tmpCol = c1
             c1 = c2
             c2 = tmpCol
-        #Debugging
-        if(r1 < 0 or r2 < 0 or c1 < 0 or c2 < 0):
-            print("Shift Error")
         #add into Decrypted message
-        strDe += tableDe[r1][c1]
-        strDe += tableDe[r2][c2]
+        strDe += tableDe[r1][c1] + tableDe[r2][c2]
+    
     return strDe.lower()
 
 def VERNAM_DEC(key,cipher):
@@ -126,47 +100,71 @@ def VERNAM_DEC(key,cipher):
 
 def ROWTRANS_DEC(key,cipher):
     strDe = ""
-    rowNum = int(math.ceil(len(cipher)/len(key)))
+    rowNum = int(math.ceil(len(cipher)/float(len(key))))
     colNum = len(key)
+    #remainders. Determines the how many character to get for a column
+    rem = len(cipher) % colNum
     table = [[ ' ' for i in range(colNum)] for i in range(rowNum)]
+    cipherPos = 0
+
     #Create Decryption Table
-    row = 0
-    col = 0
-    for char in cipher:
-        table[row][col] = char
-        row += 1
-        if(row==rowNum):
-            row = 0
-            col += 1
-            
+    for i in range(1,colNum+1):
+        idx = key.index(str(i))
+        getChars = rowNum
+        if( idx >= rem and rem != 0 ):
+            getChars -= 1
+        for row in range(getChars):
+            table[row][idx] = cipher[cipherPos]
+            cipherPos += 1
+
     #Build Decrypted Message 
     for r in range(rowNum):
-        for keyPosChar in key:
-            keyPos = int(keyPosChar) - 1
-            strDe += table[r][keyPos]
+        for c in range(colNum):
+            if(table[r][c] != ' ' ):
+                strDe += table[r][c]
 
     return strDe
 
 
 def RAILFENCE_DEC(key, cipher):
-    strDe = ""
-    keyLen = int(key)
-    colNum = int(math.ceil(len(cipher)/float(keyLen)))
-    table = [[' ' for i in range(colNum)] for i in range(keyLen)]
-    #Create Decryption Table
-    row = 0
-    col = 0
-    for char in cipher:
-        table[row][col] = char
-        col += 1
-        if(col == colNum):
-            col = 0
-            row += 1
-    #Build Decrypted Message
-    for c in range(colNum):
-        for r in range(keyLen):
-            strDe += table[r][c]
+    ciphLen = len(cipher)
+    strDe = list([' ' for i in range(ciphLen)])
+    rowNum = int(key)
+    CalcGap = lambda(x): x * 2 - 3
     
+    ciphIdx = 0
+    #Build Decrypted Message
+    for layer in range(1,rowNum+1):
+        #set the starting cipher index
+        msgIdx = layer-1
+
+        #highest and lowest point of wave
+        #has no wave interception point
+        if(layer==1 or rowNum-layer==0):
+            while(msgIdx < ciphLen and ciphIdx < ciphLen):
+                strDe[msgIdx] = cipher[ciphIdx]
+                msgIdx += CalcGap(rowNum)+1
+                ciphIdx += 1
+        else:
+            while(msgIdx < ciphLen):
+                #wave start point
+                strDe[msgIdx] = cipher[ciphIdx]
+                #the intercept point distance is calculated 
+                #base on the small wave.
+                #the small wave height is the distance from current layer to the bottom
+                msgIdx += CalcGap((rowNum-layer+1))+1
+                ciphIdx += 1
+                #interception point of wave
+                if(msgIdx < ciphLen):
+                    strDe[msgIdx] = cipher[ciphIdx]
+                    #calculate the next wave start.
+                    #the intercept point distance is calculated base on the small wave.
+                    #the small wave height is the distance from current layer to the top.
+                    msgIdx += CalcGap(layer)+1
+                    ciphIdx += 1
+                else:
+                    break
+    strDe = "".join(strDe)
     return strDe
 
 if __name__ == '__main__':
@@ -174,7 +172,7 @@ if __name__ == '__main__':
     Key = sys.argv[2].lower()
     Cipher = sys.argv[3].lower()
 #    print(decType,Key,Cipher)
-    if decType == 'caeser':
+    if decType == 'caesar':
         print(CAESAR_DEC(int(Key),Cipher))
     elif decType == 'playfair':
         print(PLAYFAIR_DEC(Key,Cipher)) 

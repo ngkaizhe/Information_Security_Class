@@ -1,0 +1,9 @@
+python Decrypt.py caesar 3 PHHWPHDIWHUWKHWRJDSDUWB
+python Decrypt.py caesar 7 RLLWNVPUNULCLYNPCLBW
+python Decrypt.py playfair PLAYFAIREXAMPLE BMODZBXDNABEKUDMUIXMMOUVIF
+python Decrypt.py vernam XMCL QIJF
+python Decrypt.py row 4312567 TTNAAPTMTSUOAODWCOIXKNLYPETZ
+python Decrypt.py row 4312567 TTNAPTTSUAODWCOIKNLPET
+python Decrypt.py rail_fence 2 MEMATRHTGPRYETEFETEOAAT
+python Decrypt.py rail_fence 3 WECRLTEERDSOEEFEAOCAIVDEN
+python Decrypt.py rail_fence 4 WIREEEDSEEEACAECVDLTNROFO
