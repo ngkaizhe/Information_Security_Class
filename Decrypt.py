@@ -21,12 +21,11 @@ def PLAYFAIR_DEC(key,cipher):
     keyLen = len(key)
     #index of next available alphabet in key to fill in to Decryption Table
     #initial value: 0
-    keyIdx = 0
-   
+    keyIdx = 0   
     #replace alphabet j to i in the key
     for step,char in enumerate(key):
         if(char == 'j'):
-            key[step] = 'i'
+            key = key[:step-1] + 'i' + key[step:]
    
     #fill up the Decryption Table
     for row in range(5):
