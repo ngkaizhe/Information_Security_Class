@@ -30,8 +30,10 @@ def playfair(key: str, plaintext: str):
 	debug_print(f'playfair called! Plaintext is {plaintext}')
 
 	plaintext = plaintext.upper()
+	plaintext = plaintext.replace('J', 'I')
 	key = key.upper()
 	key += 'ABCDEFGHIKLMNOPQRSTUVWXYZ'
+	key = key.replace('J', 'I')
 
 	# create matrix
 	temp = []

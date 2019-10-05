@@ -5,6 +5,8 @@ Encrypt.py caesar 7 keepgoingnevergiveup
 
 Encrypt.py playfair PLAYFAIREXAMPLE hidethegoldinthetrexestump
 #output = BMODZBXDNABEKUDMUIXMMOUVIF
+Encrypt.py playfair PLAYFAIREXAMPLE hjdethegoldjnthetrexestump
+#output = BMODZBXDNABEKUDMUIXMMOUVIF
 
 Encrypt.py vernam XMCL helo
 #output = QIJF
