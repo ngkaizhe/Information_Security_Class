@@ -1,0 +1,7 @@
+#input 1 ->
+EncryptDES.py 0xAFAFAFAFAFAFAFAF 0xabcdef0123456789
+# output = 0x4C30FC30FB2B0BFF
+
+#input 2 ->
+EncryptDES.py 0x1259ACBD6544FCDA 0xabcdef0123456789
+# output = 0xB82CB4CAE5C4371C
