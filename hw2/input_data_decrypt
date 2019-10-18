@@ -1,0 +1,7 @@
+#input 1 ->
+python DecryptDES.py 0xAFAFAFAFAFAFAFAF 0x4C30FC30FB2B0BFF
+# output = 0xabcdef0123456789
+
+#input 2 ->
+python DecryptDES.py 0x20ff948715ff9466 0xc4d65b9943f1c2c7
+# output = 0x9487948794879487 
