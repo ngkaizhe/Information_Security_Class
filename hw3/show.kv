@@ -1,0 +1,238 @@
+#:kivy 1.11.1
+#:import os os
+
+<BlackLabel@Label>
+    canvas.before:
+        Color:
+            rgba: 0, 0, 0, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    color: 1, 1, 1, 1
+    markup: True
+
+<WhiteLabel@Label>
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    color: 0, 0, 0, 1
+    markup: True
+
+<ShowScreen>:
+    beforeProcessingWidget: beforeProcessingWidget
+    afterProcessingWidget: afterProcessingWidget
+
+    BoxLayout:
+        size: root.width, root.height
+        orientation: 'vertical'
+
+        BoxLayout:
+            size_hint_y: 0.05
+            Label:
+                text: 'After'
+            Label:
+                text: 'Before'
+
+        BoxLayout:
+            orientation: 'horizontal'
+
+            BoxLayout:
+                orientation: 'vertical'
+
+                AnchorLayout:
+                    canvas.before:
+                        Color:
+                            rgba: 94 / 256, 0, 80 / 256, 1
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+
+                    Image:
+                        id: afterProcessingWidget
+                        source: root.afterProcessingLocation
+                        size_hint: (0.4, 0.4)
+
+                BoxLayout:
+                    orientation: 'vertical'
+
+                    BoxLayout:
+                        orientation: 'vertical'
+                        BoxLayout:
+                            orientation: 'vertical'
+                            canvas.before:
+                                Color:
+                                    rgba: 1, 1, 1, 1
+                                Rectangle:
+                                    pos: self.pos
+                                    size: self.size
+
+                            Label:
+                                color: 0, 0, 0, 1
+                                size_hint_y: 0.1
+                                anchor_y: 'top'
+                                anchor_y: 'center'
+                                text: 'Input Data'
+
+
+                            GridLayout:
+                                cols: 2
+                                BlackLabel:
+                                    text: 'Mode'
+                                Spinner:
+                                    id: mode
+                                    text: 'ECB'
+                                    values: ('ECB','CBC', 'CTR')
+
+                                WhiteLabel:
+                                    text: 'key' + '[color=ff3333](*)[/color]'
+                                TextInput:
+                                    id: key
+                                    focus: True
+                                    text: 'keykeykeyk'
+
+                                BlackLabel:
+                                    text: 'IV' + ('' if mode.text != 'CBC' else '[color=ff3333](*)[/color]')
+                                TextInput:
+                                    id: IV
+                                    disabled: True if mode.text != 'CBC' else False
+                                    text: 'ivvvvv'
+
+                                WhiteLabel:
+                                    text: 'Nonce' + ('' if mode.text != 'CTR' else '[color=ff3333](*)[/color]')
+                                TextInput:
+                                    id: Nonce
+                                    disabled: True if mode.text != 'CTR' else False
+                                    text: 'nonce'
+
+                                BlackLabel:
+                                    text: 'InitialValue' + ('' if mode.text != 'CTR' else '[color=ff3333](*)[/color]')
+                                TextInput:
+                                    id: InitialValue
+                                    disabled: True if mode.text != 'CTR' else False
+                                    text: '123'
+
+                        BoxLayout:
+                            orientation: 'vertical'
+                            size_hint_y: 0.4
+                            canvas.before:
+                                Color:
+                                    rgba: 46/256, 49/256, 49/256, 1
+                                Rectangle:
+                                    pos: self.pos
+                                    size: self.size
+                            Label:
+                                size_hint_y: 0.2
+                                text: 'Function Button'
+
+                            BoxLayout:
+                                orientation: 'horizontal'
+
+                                Button:
+                                    text: 'LoadImage'
+                                    on_press: root.LoadImage()
+
+                                Button:
+                                    text: 'SaveResult'
+                                    on_press: root.SaveResult()
+
+                                Button:
+                                    text: 'UseResult'
+                                    on_press: root.UseResult()
+
+
+            BoxLayout:
+                orientation: 'vertical'
+
+                AnchorLayout:
+                    canvas.before:
+                        Color:
+                            rgba: 1, 0, 80 / 256, 1
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+
+                    Image:
+                        id: beforeProcessingWidget
+                        source: root.beforeProcessingLocation
+                        size_hint: (0.5, 0.5)
+
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: 0.2
+                    Button:
+                        text: 'encrypt'
+                        on_press:
+                            if mode.text == 'ECB': \
+                            root.encrypt(mode=mode.text, key=key.text)
+                            elif mode.text == 'CBC': \
+                            root.encrypt(mode=mode.text, key=key.text, IV=IV.text)
+                            elif mode.text == 'CTR': \
+                            root.encrypt(mode=mode.text, key=key.text, Nonce=Nonce.text, InitialValue=InitialValue.text)
+                            else: \
+                            root.encrypt(mode='Invalid Mode')
+
+                    Button:
+                        text: 'decrypt'
+                        on_press:
+                            if mode.text == 'ECB': \
+                            root.decrypt(mode=mode.text, key=key.text)
+                            elif mode.text == 'CBC': \
+                            root.decrypt(mode=mode.text, key=key.text, IV=IV.text)
+                            elif mode.text == 'CTR': \
+                            root.decrypt(mode=mode.text, key=key.text, Nonce=Nonce.text, InitialValue=InitialValue.text)
+                            else: \
+                            root.decrypt(mode='Invalid Mode')
+
+
+<LoadDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+            path: os.getcwd()
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Load"
+                on_release: root.load(filechooser.path, filechooser.selection)
+
+<SaveDialog>:
+    text_input: text_input
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+            path: os.getcwd()
+            on_selection: text_input.text = self.selection and self.selection[0] or ''
+
+        TextInput:
+            id: text_input
+            size_hint_y: None
+            height: 30
+            multiline: False
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Save"
+                disabled: True if text_input.text == '' else False
+                on_release: root.save(filechooser.path, text_input.text)
