@@ -1,15 +1,17 @@
 import kivy
 from kivy.app import App
 from kivy.uix.widget import Widget
-from mode.CBC import CBC
-from mode.ECB import ECB
-from mode.CTR import CTR
 from PIL import Image
+from Crypto.Cipher import AES
 from kivy.factory import Factory
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.popup import Popup
+from mode.CBC import CBC
+from mode.ECB import ECB
+from mode.CTR import CTR
 import os
+import win32timezone
 
 kivy.require('1.11.1')  # replace with your current kivy version !
 
@@ -28,6 +30,8 @@ class ShowScreen(Widget):
 
     defaultLocation = os.path.join(os.getcwd(), 'asset\\default.png')
     tempResultLocation = os.path.join(os.getcwd(), 'asset\\tempResult.ppm')
+    tempCauseLocation = os.path.join(os.getcwd(), 'asset\\tempCause.ppm')
+
     beforeProcessingLocation = StringProperty(defaultLocation)
     afterProcessingLocation = StringProperty(defaultLocation)
 
@@ -108,7 +112,8 @@ class ShowScreen(Widget):
 
     def UseResult(self):
         # update ui
-        self.beforeProcessingWidget.source = self.afterProcessingWidget.source
+        self.afterProcessingImg.save(self.tempCauseLocation)
+        self.beforeProcessingWidget.source = self.tempCauseLocation
         self.beforeProcessingWidget.reload()
         self.afterProcessingWidget.source = self.defaultLocation
         self.afterProcessingWidget.reload()

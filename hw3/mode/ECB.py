@@ -1,6 +1,6 @@
 from Crypto.Cipher import AES
 from PIL import Image
-from mode.Helper import pad, convert_to_RGB
+from .Helper import pad, convert_to_RGB
 
 
 class ECB(object):
