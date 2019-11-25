@@ -11,7 +11,7 @@ from mode.CBC import CBC
 from mode.ECB import ECB
 from mode.CTR import CTR
 import os
-import win32timezone
+#import win32timezone
 
 kivy.require('1.11.1')  # replace with your current kivy version !
 
@@ -28,9 +28,9 @@ class SaveDialog(FloatLayout):
 
 class ShowScreen(Widget):
 
-    defaultLocation = os.path.join(os.getcwd(), 'asset\\default.png')
-    tempResultLocation = os.path.join(os.getcwd(), 'asset\\tempResult.ppm')
-    tempCauseLocation = os.path.join(os.getcwd(), 'asset\\tempCause.ppm')
+    defaultLocation = os.path.join(os.getcwd(), 'asset/default.png')
+    tempResultLocation = os.path.join(os.getcwd(), 'asset/tempResult.ppm')
+    tempCauseLocation = os.path.join(os.getcwd(), 'asset/tempCause.ppm')
 
     beforeProcessingLocation = StringProperty(defaultLocation)
     afterProcessingLocation = StringProperty(defaultLocation)
@@ -59,16 +59,19 @@ class ShowScreen(Widget):
 
         if mode == 'ECB':
             ecb = ECB()
-            self.afterProcessingImg = ecb.ECB_encrypt(self.beforeProcessingWidget.source, key)
+            self.afterProcessingImg = ecb.ECB_encrypt(
+                self.beforeProcessingWidget.source, key)
         elif mode == 'CBC':
             cbc = CBC()
             iv = (self.to16Bytes(kwargs['IV'])).encode('utf-8')
-            self.afterProcessingImg = cbc.CBC_encrypt(self.beforeProcessingWidget.source, key, iv)
+            self.afterProcessingImg = cbc.CBC_encrypt(
+                self.beforeProcessingWidget.source, key, iv)
         elif mode == 'CTR':
             ctr = CTR()
             nonce = (self.to8Bytes(kwargs['Nonce'])).encode('utf-8')
             intial_value = int(kwargs['InitialValue'])
-            self.afterProcessingImg = ctr.CTR_encrypt(self.beforeProcessingWidget.source, key, nonce, intial_value)
+            self.afterProcessingImg = ctr.CTR_encrypt(
+                self.beforeProcessingWidget.source, key, nonce, intial_value)
 
         self.afterProcessingImg.save(self.tempResultLocation)
         self.afterProcessingWidget.source = self.tempResultLocation
@@ -80,16 +83,19 @@ class ShowScreen(Widget):
 
         if mode == 'ECB':
             ecb = ECB()
-            self.afterProcessingImg = ecb.ECB_decrypt(self.beforeProcessingWidget.source, key)
+            self.afterProcessingImg = ecb.ECB_decrypt(
+                self.beforeProcessingWidget.source, key)
         elif mode == 'CBC':
             cbc = CBC()
             iv = (self.to16Bytes(kwargs['IV'])).encode('utf-8')
-            self.afterProcessingImg = cbc.CBC_decrypt(self.beforeProcessingWidget.source, key, iv)
+            self.afterProcessingImg = cbc.CBC_decrypt(
+                self.beforeProcessingWidget.source, key, iv)
         elif mode == 'CTR':
             ctr = CTR()
             nonce = (self.to8Bytes(kwargs['Nonce'])).encode('utf-8')
             intial_value = int(kwargs['InitialValue'])
-            self.afterProcessingImg = ctr.CTR_decrypt(self.beforeProcessingWidget.source, key, nonce, intial_value)
+            self.afterProcessingImg = ctr.CTR_decrypt(
+                self.beforeProcessingWidget.source, key, nonce, intial_value)
 
         self.afterProcessingImg.save(self.tempResultLocation)
         self.afterProcessingWidget.source = self.tempResultLocation
@@ -120,7 +126,8 @@ class ShowScreen(Widget):
 
     def load(self, path, filename):
         self.beforeProcessingWidget.source = os.path.join(path, filename[0])
-        self.beforeProcessingImg = Image.open(self.beforeProcessingWidget.source)
+        self.beforeProcessingImg = Image.open(
+            self.beforeProcessingWidget.source)
         self.dismiss_popup()
 
     def save(self, path, filename):
