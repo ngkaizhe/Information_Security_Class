@@ -1,3 +1,4 @@
+import os
 import kivy
 from kivy.app import App
 from kivy.uix.widget import Widget
@@ -10,7 +11,7 @@ from kivy.uix.popup import Popup
 from mode.CBC import CBC
 from mode.ECB import ECB
 from mode.CTR import CTR
-import os
+from mode.CTR2 import CTR2
 #import win32timezone
 
 kivy.require('1.11.1')  # replace with your current kivy version !
@@ -72,6 +73,13 @@ class ShowScreen(Widget):
             intial_value = int(kwargs['InitialValue'])
             self.afterProcessingImg = ctr.CTR_encrypt(
                 self.beforeProcessingWidget.source, key, nonce, intial_value)
+        elif mode == 'CTR2':
+            ctr2 = CTR2()
+            nonce = (self.to8Bytes(kwargs['Nonce'])).encode('utf-8')
+            intial_value = int(kwargs['InitialValue'])
+            seed = int(kwargs['Seed'])
+            self.afterProcessingImg = ctr2.CTR2_encrypt(
+                self.beforeProcessingWidget.source, key, nonce, intial_value, seed)
 
         self.afterProcessingImg.save(self.tempResultLocation)
         self.afterProcessingWidget.source = self.tempResultLocation
@@ -96,6 +104,13 @@ class ShowScreen(Widget):
             intial_value = int(kwargs['InitialValue'])
             self.afterProcessingImg = ctr.CTR_decrypt(
                 self.beforeProcessingWidget.source, key, nonce, intial_value)
+        elif mode == 'CTR2':
+            ctr2 = CTR2()
+            nonce = (self.to8Bytes(kwargs['Nonce'])).encode('utf-8')
+            intial_value = int(kwargs['InitialValue'])
+            seed = int(kwargs['Seed'])
+            self.afterProcessingImg = ctr2.CTR2_decrypt(
+                self.beforeProcessingWidget.source, key, nonce, intial_value, seed)
 
         self.afterProcessingImg.save(self.tempResultLocation)
         self.afterProcessingWidget.source = self.tempResultLocation

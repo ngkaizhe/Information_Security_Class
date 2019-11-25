@@ -84,7 +84,7 @@
                                 Spinner:
                                     id: mode
                                     text: 'ECB'
-                                    values: ('ECB','CBC', 'CTR')
+                                    values: ('ECB','CBC', 'CTR','CTR2')
 
                                 WhiteLabel:
                                     text: 'key' + '[color=ff3333](*)[/color]'
@@ -101,18 +101,25 @@
                                     text: 'ivvvvv'
 
                                 WhiteLabel:
-                                    text: 'Nonce' + ('' if mode.text != 'CTR' else '[color=ff3333](*)[/color]')
+                                    text: 'Nonce' + ('' if (mode.text != 'CTR' and mode.text != 'CTR2') else '[color=ff3333](*)[/color]')
                                 TextInput:
                                     id: Nonce
-                                    disabled: True if mode.text != 'CTR' else False
+                                    disabled: True if (mode.text != 'CTR' and mode.text != 'CTR2') else False
                                     text: 'nonce'
 
                                 BlackLabel:
-                                    text: 'InitialValue' + ('' if mode.text != 'CTR' else '[color=ff3333](*)[/color]')
+                                    text: 'InitialValue' + ('' if (mode.text != 'CTR' and mode.text != 'CTR2') else '[color=ff3333](*)[/color]')
                                 TextInput:
                                     id: InitialValue
-                                    disabled: True if mode.text != 'CTR' else False
+                                    disabled: True if (mode.text != 'CTR' and mode.text != 'CTR2') else False
                                     text: '123'
+
+                                BlackLabel:
+                                    text: 'Seed' + ('' if mode.text != 'CTR2' else '[color=ff3333](*)[/color]')
+                                TextInput:
+                                    id: Seed
+                                    disabled: True if mode.text != 'CTR2' else False
+                                    text: '1000'
 
                         BoxLayout:
                             orientation: 'vertical'
@@ -172,6 +179,8 @@
                             root.encrypt(mode=mode.text, key=key.text, IV=IV.text)
                             elif mode.text == 'CTR': \
                             root.encrypt(mode=mode.text, key=key.text, Nonce=Nonce.text, InitialValue=InitialValue.text)
+                            elif mode.text == 'CTR2': \
+                            root.encrypt(mode=mode.text, key=key.text, Nonce=Nonce.text, InitialValue=InitialValue.text,Seed=Seed.text)
                             else: \
                             root.encrypt(mode='Invalid Mode')
 
@@ -184,6 +193,8 @@
                             root.decrypt(mode=mode.text, key=key.text, IV=IV.text)
                             elif mode.text == 'CTR': \
                             root.decrypt(mode=mode.text, key=key.text, Nonce=Nonce.text, InitialValue=InitialValue.text)
+                            elif mode.text == 'CTR2': \
+                            root.decrypt(mode=mode.text, key=key.text, Nonce=Nonce.text, InitialValue=InitialValue.text,Seed = Seed.text)
                             else: \
                             root.decrypt(mode='Invalid Mode')
 
