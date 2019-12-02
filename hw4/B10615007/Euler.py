@@ -1,4 +1,10 @@
-from Prime import GCD
+def GCD(a, b):
+    # get which is smaller and larger
+    large, small = (a, b) if a > b else (b, a)
+    if small == 0:
+        return large
+    else:
+        return GCD(small, large % small)
 
 
 def EulerPhiFunc(n, p=None, q=None):
@@ -39,3 +45,4 @@ def EPPhi(n):
 
 if __name__ == "__main__":
     print(f"phi({154681043064895080}) = {EulerPhiFunc(154681043064895080)}\n")
+    print(f"phi({3545248925138985698472936968669710062600}) = {EulerPhiFunc(3545248925138985698472936968669710062600)}\n")

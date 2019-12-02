@@ -10,7 +10,7 @@ if __name__ == "__main__":
     if True or sys.argv[1] == "init":
         start()
         # bits = sys.argv[2] - 2 if sys.argv[2] > 2 else 0
-        bits = 40
+        bits = 64
         mode = "CRT"
 
         # we only need to generate the part except first and last bit
@@ -45,10 +45,12 @@ if __name__ == "__main__":
 
         e = None
         # e should be as small as possible so we use iteration from 2
+        start()
         for i in range(2, PhiN):
             if GCD(PhiN, i) == 1:
                 e = i
                 break
+        end("Iteration for e")
 
         start()
         d = BigExp(e, PhiN, mode=mode) ** -1

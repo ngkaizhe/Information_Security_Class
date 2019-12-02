@@ -24,7 +24,7 @@ class BigExp(object):
         if power == -1:
             power += PhiN
 
-        return pow(self.baseNum % self.mod_range, power % PhiN) % self.mod_range
+        return pow(self.baseNum % self.mod_range, power % PhiN, self.mod_range)
 
     def _SAM(self, power):
         PhiN = EulerPhiFunc(self.mod_range, self.p, self.q)
@@ -39,7 +39,7 @@ class BigExp(object):
         while i < len(powerBin):
             f.write(f"Step: {i+1}a\n\t")
             f.write(f"{(baseN % self.mod_range)} * {(baseN % self.mod_range)} % {self.mod_range} =")
-            baseN = ((baseN % self.mod_range) * (baseN % self.mod_range)) % self.mod_range
+            baseN = pow(baseN, 2, self.mod_range)
             f.write(f" {baseN}\n")
 
             if powerBin[i] == '1':

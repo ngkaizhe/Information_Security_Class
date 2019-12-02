@@ -1,4 +1,6 @@
 import math
+import random
+from Crypto.PublicKey import RSA
 
 primeNumbers = [
     2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47,
@@ -19,7 +21,7 @@ primeNumbers = [
 
 
 def PrimeTest(number):
-    return EasyPrimeTest(number)
+    return MillerRabinPrimeTest(number)
 
 
 # Just a method found in
@@ -39,9 +41,34 @@ def EasyPrimeTest(n):
     return True
 
 
-def MillerRabinPrimeTest(number):
-    if number in primeNumbers:
+def MillerRabinPrimeTest(n):
+    if n in primeNumbers:
         return True
+    k = 6
+    r = 0
+    d = n - 1
+    while d % 2 == 0:
+        d //= 2
+        r += 1
+
+    # witness loop
+    for i in range(k):
+        gotoWitness = False
+        a = random.randrange(2, n-2)
+        x = pow(a, d, n)
+
+        if x == 1 or x == n - 1:
+            continue
+
+        for j in range(r-1):
+            x = pow(x, 2, n)
+            if x == n-1:
+                gotoWitness = True
+
+        if gotoWitness is False:
+            return False
+
+    return True
 
 
 def GCD(a, b):
@@ -54,4 +81,12 @@ def GCD(a, b):
 
 
 if __name__ == "__main__":
-    print(GCD(270, 192))
+    for i in range(100000):
+        key = RSA.generate(1024)
+
+        if MillerRabinPrimeTest(key.p) is False:
+            print(f"Number is not prime: {key.p}")
+
+        if MillerRabinPrimeTest(key.q) is False:
+            print(f"Number is not prime: {key.q}")
+
