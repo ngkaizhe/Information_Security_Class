@@ -1,6 +1,13 @@
-p = 4291670970739
-q = 3079162730627
-n = 13214753305213327056123353
-Phi(n) = 13214753305205956222421988
-e = 5
-d = 7928851983123573733453193
+=================
+==================
+
+Find prime n value part Second Used = 0.30019593238830566
+Iteration for e part Second Used = 0.0
+Calculate d value part Second Used = 0.0
+Get ciphertext value part Second Used = 0.0029931068420410156
+Get plaintext value part Second Used = 0.05584979057312012
+Whole function part Second Used = 0.36003732681274414
+
+
+=================
+==================

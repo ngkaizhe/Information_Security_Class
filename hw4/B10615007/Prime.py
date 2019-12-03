@@ -44,7 +44,7 @@ def EasyPrimeTest(n):
 def MillerRabinPrimeTest(n):
     if n in primeNumbers:
         return True
-    k = 6
+    k = 4
     r = 0
     d = n - 1
     while d % 2 == 0:

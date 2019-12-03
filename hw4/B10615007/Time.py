@@ -1,6 +1,7 @@
 from time import time
 
 startTimes = []
+SecondElapsedRecords = []
 
 
 def start():
@@ -11,4 +12,15 @@ def start():
 def end(text=""):
     end_time = time()
     seconds_elapsed = end_time - startTimes.pop()
-    print(f"{text} part Second Used = {seconds_elapsed}")
+    SecondElapsedRecords.append(f"{text} part Second Used = {seconds_elapsed}\n")
+
+
+def writeRecords():
+    f1 = open("log.txt", "w+")
+    f1.write("=================\n"
+             "==================\n\n")
+    for i in SecondElapsedRecords:
+        f1.write(i)
+
+    f1.write("\n\n=================\n"
+             "==================\n")

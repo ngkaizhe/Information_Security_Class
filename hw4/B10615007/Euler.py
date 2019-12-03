@@ -7,9 +7,11 @@ def GCD(a, b):
         return GCD(small, large % small)
 
 
-def EulerPhiFunc(n, p=None, q=None):
+def EulerPhiFunc(n, p=None, q=None, isPrime=False):
     if p is not None and q is not None:
         return (p-1) * (q-1)
+    if isPrime:
+        return n-1
 
     # bruto force
     # return BFPhi(n)
@@ -27,7 +29,7 @@ def BFPhi(n):
     return result
 
 
-# https://www.geeksforgeeks.org/eulers-totient-function/
+# https://www.geeksforgeeks.org/optimized-euler-totient-function-multiple-evaluations/
 def EPPhi(n):
     result = n
     p = 2
@@ -45,4 +47,4 @@ def EPPhi(n):
 
 if __name__ == "__main__":
     print(f"phi({154681043064895080}) = {EulerPhiFunc(154681043064895080)}\n")
-    print(f"phi({3545248925138985698472936968669710062600}) = {EulerPhiFunc(3545248925138985698472936968669710062600)}\n")
+    print(f"phi({2415423688769381937042135215966800702356}) = {EulerPhiFunc(2415423688769381937042135215966800702356)}\n")
