@@ -3,15 +3,16 @@ from Prime import PrimeTest, GCD
 from Euler import EulerPhiFunc
 from BigExp import BigExp
 import random
-from Time import start, end
+from Time import start, end, writeRecords, first
+import math
 
 
 if __name__ == "__main__":
-    if True or sys.argv[1] == "init":
+    if sys.argv[1] == "init":
         start()
-        # bits = sys.argv[2] - 2 if sys.argv[2] > 2 else 0
-        bits = 64
-        mode = "CRT"
+
+        bits = int(sys.argv[3]) - 2 if int(sys.argv[3]) > 2 else 0
+        mode = sys.argv[2]
 
         # we only need to generate the part except first and last bit
         numberUsed = []
@@ -53,6 +54,7 @@ if __name__ == "__main__":
         end("Iteration for e")
 
         start()
+        # this part takes too long
         d = BigExp(e, PhiN, mode=mode) ** -1
         end("Calculate d value")
 
@@ -65,26 +67,51 @@ if __name__ == "__main__":
               f"d = {d}")
 
         # write the result on file
-        f = open("log.txt", "w+")
+        f = open("info.txt", "w+")
         f.write(f"p = {p}\n"
                 f"q = {q}\n"
                 f"n = {n}\n"
                 f"Phi(n) = {PhiN}\n"
                 f"e = {e}\n"
                 f"d = {d}\n")
+        f.close()
+        writeRecords()
 
-        message = 5191651
-        start()
-        ciphertext = BigExp(message, n, mode=mode, p=p, q=q) ** e
-        end("Get ciphertext value")
-        start()
-        plaintext = BigExp(ciphertext, n, mode=mode, p=p, q=q) ** d
-        end("Get plaintext value")
+        while True:
+            input_text = input("Input en or de or ex(encrypt/decrypt/exit): ")
+            if input_text == 'en':
+                key = input("Input key to encrypt: ")
+                start()
+                keyInt = ''
+                for letter in key:
+                    # the ord Ascii value should only between 1-255
+                    keyInt += str(ord(letter)).rjust(3, '0')
+                keyInt = int(keyInt)
+                ciphertext = BigExp(keyInt, n, mode=mode, p=p, q=q) ** e
+                print(f"\nYour encrypted value is:\n{ciphertext}")
+                end("Calculate encrypt value")
+                writeRecords(False)
 
-        print(f"message = {message}\n"
-              f"ciphertext = {ciphertext}\n"
-              f"plaintext = {plaintext}\n")
-        end("Whole function")
+            elif input_text == 'de':
+                value = input("Input value to decrypt: ")
+                start()
+                value = int(value)
+                plaintext = BigExp(value, n, mode=mode, p=p, q=q) ** d
+                plaintext = str(plaintext)
+                plaintext = str(plaintext).rjust(math.ceil(len(plaintext) / 3) * 3, '0')
+                plaintext = [plaintext[i: i+3] for i in range(0, len(plaintext), 3)]
+                plainInt = ''
+                for char in plaintext:
+                    # the ord Ascii value should only between 1-255
+                    plainInt += str(chr(int(char)))
+                print(f"\nYour decrypted key is:\n{plainInt}")
+                end("Calculate decrypt value")
+                writeRecords(False)
+
+            elif input_text == 'ex':
+                break
+
+
 
 
 
