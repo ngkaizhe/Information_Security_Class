@@ -1,9 +1,25 @@
 =================
 ==================
 
-Find prime n value part Second Used = 14.838353872299194
+Find prime n value part Second Used = 8.420910358428955
 Iteration for e part Second Used = 0.0
 Calculate d value part Second Used = 0.0
+
+
+=================
+==================
+=================
+==================
+
+Calculate encrypt value part Second Used = 0.0019958019256591797
+
+
+=================
+==================
+=================
+==================
+
+Calculate decrypt value part Second Used = 0.562415599822998
 
 
 =================

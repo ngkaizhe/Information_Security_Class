@@ -1,8 +1,10 @@
 from time import time
 
+# list to save the starting time
 startTimes = []
-endTimes = []
+# the list to save the string about the saving time info, ex: XXX part Second Used = 0.0564
 SecondElapsedRecords = []
+# the starting time of the main function
 first = [0]
 
 
@@ -29,6 +31,7 @@ def writeRecords(new=True):
     for i in SecondElapsedRecords:
         f1.write(i)
 
+    # clear the list as we already print in file
     SecondElapsedRecords.clear()
     f1.write("\n\n=================\n"
              "==================\n")
