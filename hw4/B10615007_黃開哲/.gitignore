@@ -49,3 +49,10 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+
+# log file
+log.txt
+CRT.txt
+info.txt
+Square_and_Multiply.txt
+
