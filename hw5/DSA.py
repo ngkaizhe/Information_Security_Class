@@ -3,6 +3,7 @@ import sys
 import base64
 import hashlib
 import json
+import time
 import os
 import math
 PUB_FILE = './dsa.pub'
@@ -35,24 +36,20 @@ def SquareMultiply(base: int, expo: int, moduler: int):
 # 亂數產生可能的質數
 def GenPrimeCandidate(bits: int = 64):
     bits -= 1
-    i = 1
-    Result = 1
-    while(i < bits):
-        Result *= 2
-        Result += random.randint(0, 1)
-        i += 1
-    Result = Result * 2 + 1
+    Result = random.randint(2**(bits-1), 2**bits-1)
+    Result = (Result << 1) + 1
     return Result
 
+
 # 測驗 r = range(1,s)之間有沒有符合a^(2r*d)(modp) == -1
-
-
 def MillerTestHelper(s: int, Witness: int, PrimeCandidate: int):
     _PrimeCandidate = PrimeCandidate - 1
     for _ in range(1, s):
         Witness = (Witness ** 2) % PrimeCandidate
         if(Witness == _PrimeCandidate):
             return True
+        elif(Witness == 1):
+            return False
     return False
 
 
@@ -66,11 +63,13 @@ def MillerTest(PrimeCandidate: int, times: int):
     while(d % 2 == 0):
         s += 1
         d //= 2
+    if(not pow(random.randint(2, _PrimeCandidate-1), _PrimeCandidate, PrimeCandidate) == 1):
+        return False
 
     # 進行機率測試
     for _ in range(times):
         randInt = random.randint(2, _PrimeCandidate-1)
-        Witness = SquareMultiply(randInt, int(d), PrimeCandidate)
+        Witness = pow(randInt, int(d), PrimeCandidate)
         if(Witness == 1 or Witness == _PrimeCandidate):
             continue
         elif(MillerTestHelper(s, Witness, PrimeCandidate) != True):
@@ -82,8 +81,10 @@ def MillerTest(PrimeCandidate: int, times: int):
 
 # 產生通過米勒測試的大質數
 def GenPrimeMiller(bits: int, tests: int):
+    generations = 0
     while(True):
         PrimeCandidate = GenPrimeCandidate(bits)
+        generations += 1
         if(MillerTest(PrimeCandidate, tests) == True):
             return PrimeCandidate
 
@@ -101,6 +102,7 @@ def ExtendGCD(a: int, b: int):
     return a, A
 
 
+# 產生符合DSA要求條件的P與Q
 def ValidKeyPairs():
     len_p = 1024
     len_q = 160
@@ -115,17 +117,18 @@ def ValidKeyPairs():
     x = b_1023 + x % b_1023
     t = math.ceil(x/(2*q*p0))
     counter = 0
+    p0q2 = 2 * q * p0
     while(counter < 4 * len_p):
         # Generate Prime Candidate
-        if((2 * t * q * p0) + 1 > b_1024):
-            t = math.ceil(b_1023/(2*q*p0))
-        p = (2*t*q*p0) + 1
+        if((t*p0q2) + 1 > b_1024):
+            t = math.ceil(b_1023/p0q2)
+        p = (t*p0q2) + 1
         counter += 1
         # Test Validity
         a = random.randint(2, p-2)
-        a = 2 + a % (p-3)
-        z = SquareMultiply(a, 2*t*q, p)
-        if(ExtendGCD(z-1, p)[0] == 1 and SquareMultiply(z, p0, p) == 1):
+        z = pow(a, 2*t*q, p)
+        # if(MillerTest(p, 8) and (p-1) % q == 0):
+        if(ExtendGCD(z-1, p)[0] == 1 and pow(z, p0, p) == 1):
             # Valid Key Pair
             return p, q
         t = t + 1
@@ -136,17 +139,17 @@ def ValidKeyPairs():
 def Generate():
     global pubJson
     global prvJson
-
+    random.seed(time.time)
     # Common Parameters
     p, q = ValidKeyPairs()
     if(p == -1):
         print('Cannot Generate Key. Please Try Again.')
         return
-    g = SquareMultiply((random.randint(2, p-2)), (p-1)//q, p)
+    g = pow((random.randint(2, p-2)), (p-1)//q, p)
     # Private Key
     x = random.randint(2, p-1)
     # Public Key
-    y = SquareMultiply(g, x, p)
+    y = pow(g, x, p)
 
     # 存入公開檔案
     pubJson = {
@@ -172,13 +175,18 @@ def Generate():
     pubfile.close()
     prvfile.close()
     # # Print Debug Messages
+    print("<========INFOS=========>")
     print("P:" + str(p))
     print("Q:" + str(q))
     print("G:" + str(g))
     print("Y:" + str(y))
     print("X:" + str(x))
-    print("Validation[g^q%p]:"+str(SquareMultiply(g, q, p)))
-    print("Key Generation Done...")
+    print("Validation[g^q%p]:"+str(pow(g, q, p)))
+    print("<========FILES=========>")
+    print("Public Key: " + PUB_FILE)
+    print("Private Key: " + PRV_FILE)
+    # print("<========MSG=========>")
+    # print("Key Generation Done...")
 
 
 # 載入金鑰
@@ -221,7 +229,7 @@ def Sign(plainStr: str):
     if(not gcd == 1):
         print('Error: Cannot Sign Message(cannot find k inverse).Please Retry Again.')
         return
-    r = SquareMultiply(g, k, p) % q
+    r = pow(g, k, p) % q
     s = ((k_inv % q) * (hashv % q + (x * r) % q)) % q
 
     outData = {
@@ -266,15 +274,13 @@ def Verify(cypherStr: str):
 
     u1 = (hashv * w) % q
     u2 = (r * w) % q
-    v = ((SquareMultiply(g, u1, p) * SquareMultiply(y, u2, p)) % p) % q
+    v = ((pow(g, u1, p) * pow(y, u2, p)) % p) % q
     if(v == r):
         return '(Verified)' + plainStr
     else:
         return '(Unverified)' + plainStr
 
 
-# Generate()
-# print(Verify(Sign('87878787878787878787')))
 if __name__ == "__main__":
     if(len(sys.argv) == 1):
         print('-n : Generate New Keys (1024,160)')
